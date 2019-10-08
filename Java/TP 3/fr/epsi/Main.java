@@ -14,7 +14,7 @@ public class Main
     {
         Account account;
         try {
-            account = new Account(-1.5);
+            account = new Account(1.5);
         }
         catch(AccountException e) {
             System.err.println(e.getMessage());
