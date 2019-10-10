@@ -1,0 +1,98 @@
+<html>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<title>Rocket Game</title>
+		<style type="text/css">
+			body{
+				background-image: url('stars.jpg');
+				-webkit-animation: slide 15s linear infinite;
+			}
+			@-webkit-keyframes slide {
+		    from { background-position: 0 0; }
+		    to { background-position: -2000px 0; }
+			}
+			img {
+				top: 50%;
+				position: fixed;
+				max-width: 150px;
+			}
+			#meteorite {
+				right: 0;
+			}
+			.boom {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<img id="rocket" src="rocket.png">
+		<img id="meteorite" src="meteorite.png">
+		<img class='boom' src='boom.png' style="max-width: 100px;">
+		<script type="text/javascript">
+			var intervalR = setInterval(frame, 1); //1ms
+			function frame() {
+				var rpx = 1; //déplacement de 1px
+				var rocket = $('#rocket');
+				var posR = rocket.offset();
+			  if(pressDown && (posR.top + rocket.height()) < $(window).height() - rpx){
+					$(rocket).offset({top: posR.top + rpx});
+				} 
+			  if(pressUp && posR.top > rpx){
+					$(rocket).offset({top: posR.top - rpx});
+				}
+				if(pressRight && (posR.left + rocket.width()*2) < $(window).width()/2 - rpx/2){
+					$(rocket).offset({left: posR.left + rpx});
+				}
+				if(pressLeft && posR.left > rpx){
+					$(rocket).offset({left: posR.left - rpx});
+				}
+				
+			}
+			var pressUp, pressDown, pressLeft, pressRight;
+			$(window).keydown(function(event){
+				pressUp = event.key == "ArrowUp" ? true : false;
+        pressDown = event.key == "ArrowDown" ?  true : false;
+        pressLeft = event.key == "ArrowLeft" ?  true : false;
+        pressRight = event.key == "ArrowRight" ?  true : false;
+			});
+
+			var intervalM = setInterval( meteorite , 8);
+
+			function meteorite(){
+				var mpx = 1;
+				var rocket = $('#rocket');
+				var posR = rocket.offset();
+				var meteorite = $('#meteorite');
+				var posM = meteorite.offset();
+
+				if (posR.top > posM.top) {
+					$(meteorite).offset({left: posM.left - mpx, top: posM.top + mpx});
+				} else {
+					$(meteorite).offset({left: posM.left - mpx, top: posM.top - mpx});
+				}
+
+				if ( collision(rocket, meteorite) ) {
+					$('#rocket').css('visibility','hidden');
+					$('.boom').css('display','block');
+					$('.boom').offset({left: posR.left, top: posR.top});
+					setTimeout(function(){ $('.boom').css('display','none'); }, 200);
+				}
+
+				if(posM.left + meteorite.width() < 0)
+					clearInterval(intervalM);
+			}
+
+			function collision(rocket, meteorite){
+				if (rocket.offset().left + rocket.width() < meteorite.offset().left)
+		            return false;
+		        if (rocket.offset().left > meteorite.offset().left + meteorite.width())
+		            return false;
+		        if (rocket.offset().top + rocket.height() < meteorite.offset().top)
+		            return false;
+		        if (rocket.offset().top > meteorite.offset().top + meteorite.height())
+		            return false;
+		        return true;
+			}
+		</script>
+	</body>
+</html>
